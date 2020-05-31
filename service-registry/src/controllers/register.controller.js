@@ -54,10 +54,9 @@ class RegisterController {
       if (!name || !version || !port) {
         return res.status(status.BAD_REQUEST).json({
           error:
-            'Please specify all required fields: name, version, ip and port',
+            'Please specify all required fields: name, version and port',
         });
       }
-      const serviceIp = this.getIp(req);
       const existingService = await this.serviceRepository.checkService(
         name,
         version,
