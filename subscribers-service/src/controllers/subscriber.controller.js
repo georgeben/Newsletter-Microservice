@@ -1,10 +1,12 @@
 const status = require('http-status');
 
 class SubscriberController {
-  constructor({ subscriberRepository, jwt, config }) {
+  constructor({ subscriberRepository, jwt, config, getRabbitConnection, constants }) {
     this.subscriberRepository = subscriberRepository;
     this.jwt = jwt;
     this.config = config;
+    this.getRabbitConnection = getRabbitConnection;
+    this.constants = constants;
   }
 
   async addSubscriber(req, res, next) {
@@ -22,8 +24,16 @@ class SubscriberController {
         });
       }
       const newSubscriber = await this.subscriberRepository.createSubscriber({ name, email });
-      // TODO Send a message to the notification service to send a welcome email
-      // to the new subscriber
+      const { notificationQueueName } = this.config;
+      const conn = await this.getRabbitConnection();
+      const channel = await conn.createChannel();
+      await channel.assertQueue(notificationQueueName);
+      const message = JSON.stringify({
+        email,
+        name,
+        emailType: this.constants.EMAIL_TYPES.WELCOME_EMAIL,
+      });
+      await channel.sendToQueue(notificationQueueName, Buffer.from(message, 'utf-8'));
       return res.status(status.CREATED).json({
         message: 'Successfully added subscriber',
         data: newSubscriber,
