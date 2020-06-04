@@ -8,13 +8,19 @@ function consumeQueue({ config, getMessageBrokerConnection, constants, mailerSer
           console.log(`Received message ${msg.content.toString()}`);
           const data = JSON.parse(msg.content.toString());
 
-          const { emailType, name, email } = data;
+          const { emailType } = data;
           switch (emailType) {
             case constants.EMAIL_TYPES.WELCOME_EMAIL:
               console.log('Sending welcome email');
-              mailerService.sendWelcomeMail(name, email)
+              mailerService.sendWelcomeMail(data.name, data.email)
                 .then(() => channel.ack(msg))
-                .catch((err) => console.log(`Failed to send welcome email to ${email}`, err));
+                .catch((err) => console.log(`Failed to send welcome email to ${data.email}`, err));
+              break;
+            case constants.EMAIL_TYPES.UNSUBSCRIBE:
+              console.log('Sending un-subscription email');
+              mailerService.sendUnSubscriptionMail(data.email, data.token)
+                .then(() => channel.ack(msg))
+                .catch((err) => console.log(`Failed to send un-subscription email to ${data.email}`, err));
               break;
             default:
               console.log('Unknown email type');

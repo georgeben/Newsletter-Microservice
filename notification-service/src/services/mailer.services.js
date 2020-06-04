@@ -13,6 +13,17 @@ class MailerService {
       message,
     );
   }
+
+  async sendUnSubscriptionMail(email, token) {
+    const subject = 'Unsubscribe from newsletter';
+    const message = 'Sorry to see you go! Please click on this link to unsubscribe from our newsletter';
+    const link = `http://appurl.com/unsubscribe?token=${token}`; // This should be added to the app's config variables
+    return this.mailer.sendMail(
+      email,
+      subject,
+      message,
+    );
+  }
 }
 
 module.exports = MailerService;

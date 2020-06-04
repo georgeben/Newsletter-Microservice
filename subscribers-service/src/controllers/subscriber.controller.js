@@ -79,7 +79,16 @@ class SubscriberController {
       }
       const unsubscribeToken = this.jwt.sign({ email }, this.config.jwtSecret);
       console.log({ unsubscribeToken });
-      // TODO Send a message to the notification service with this unsubscribeToken
+      const { notificationQueueName } = this.config;
+      const conn = await this.getRabbitConnection();
+      const channel = await conn.createChannel();
+      await channel.assertQueue(notificationQueueName);
+      const message = JSON.stringify({
+        email,
+        token: unsubscribeToken,
+        emailType: this.constants.EMAIL_TYPES.UNSUBSCRIBE,
+      });
+      await channel.sendToQueue(notificationQueueName, Buffer.from(message, 'utf-8'));
       return res.status(status.OK).json({
         message: 'An un-subscription mail has been sent to your email',
       });
