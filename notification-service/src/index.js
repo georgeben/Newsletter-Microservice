@@ -52,6 +52,7 @@ async function gracefulShutdown() {
         process.exit(error ? 1 : 0);
       }
       console.log('Info: Shutting down server');
+      process.exit(0);
     });
   } catch (error) {
     console.log('An error occurred during shutdown', error);

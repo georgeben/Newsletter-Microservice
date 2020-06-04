@@ -57,7 +57,10 @@ async function gracefulShutdown() {
       // eslint-disable-next-line global-require
       require('mongoose')
         .disconnect()
-        .then(() => console.log('Successfully disconnected from MongoDB'))
+        .then(() => {
+          console.log('Successfully disconnected from MongoDB');
+          process.exit(0);
+        })
         .catch((err) => process.exit(err ? 1 : 0));
     });
   } catch (error) {

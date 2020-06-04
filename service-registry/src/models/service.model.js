@@ -22,7 +22,7 @@ const serviceSchema = new Schema({
   lastActive: {
     type: Date,
     required: true,
-    default: new Date(),
+    default: Date.now,
   },
   lastActiveOffset: {
     type: Number,
