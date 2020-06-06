@@ -1,6 +1,9 @@
 function consumeQueue({ config, getMessageBrokerConnection, constants, mailerService }) {
   getMessageBrokerConnection()
-    .then((conn) => conn.createChannel())
+    .then((conn) => {
+      console.log('Successfully connected to RabbitMQ');
+      return conn.createChannel();
+    })
     .then((channel) => channel.assertQueue(config.notificationQueueName).then(() => {
       channel.prefetch(1);
       channel.consume(config.notificationQueueName, (msg) => {
