@@ -12,5 +12,6 @@ module.exports = {
   development: {
     ...commonConfig,
     serviceRegistryUrl: 'http://localhost:3001',
+    databaseUrl: process.env.DEV_DB,
   },
 }[process.env.NODE_ENV || 'development'];

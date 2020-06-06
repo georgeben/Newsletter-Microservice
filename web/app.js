@@ -1,3 +1,4 @@
+require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -12,6 +13,8 @@ const subscribersRouter = require('./routes/subscribers');
 const container = require('./container');
 
 const app = express();
+
+require('./db');
 
 app.use(scopePerRequest(container));
 

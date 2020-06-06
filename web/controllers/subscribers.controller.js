@@ -11,7 +11,11 @@ class SubscriberController {
         return res.render('index', { title: 'Subscribe to our newsletter', message: req.flash('subscriptionMessage') });
       }
       const result = await this.subscriberService.addSubscriber(name, email);
-      return res.render('subscription-success', { subscriber: result.data });
+      if (result) {
+        return res.render('subscription-success', { subscriber: result.data });
+      }
+      req.flash('subscriptionMessage', 'Something went wrong. Please try again after sometime');
+      return res.render('index', { title: 'Subscribe to our newsletter', message: req.flash('subscriptionMessage') });
     } catch (error) {
       if (error.response && error.response.data) {
         if (error.response.status >= 500) {
